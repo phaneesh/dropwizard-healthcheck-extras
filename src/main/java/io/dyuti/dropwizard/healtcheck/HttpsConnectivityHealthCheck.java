@@ -2,6 +2,7 @@ package io.dyuti.dropwizard.healtcheck;
 
 import com.codahale.metrics.health.HealthCheck;
 import io.dyuti.dropwizard.config.HttpHealthCheckConfig;
+import java.net.URI;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -27,10 +28,11 @@ public class HttpsConnectivityHealthCheck extends HealthCheck {
     HttpsURLConnection connection = null;
     try {
       if (Objects.isNull(url)) {
-        url = new URL(config.getUrl());
+        url = new URI(config.getUrl()).toURL();
       }
       connection = (HttpsURLConnection) url.openConnection();
       connection.setConnectTimeout(config.getConnectTimeout());
+      connection.setRequestMethod("CONNECT");
       connection.connect();
       if (config.isVerify()) {
         Certificate[] certs = connection.getServerCertificates();

@@ -55,11 +55,14 @@ extraHealthChecks:
     - name: "remote-endpoint"
       host: "192.167.172.76"
       port: 3500
+      timeout: 2000 #2 seconds
   http:
     - name: "external-http"
       url: "http://www.somewhere.com"
+      timeout: 3000 #3 seconds
     - name: "external-https"
       url: "https://www.somewhere.com"
+      timeout: 1000 #1 second (default)
       verifyCertificate: true #Verify certificate. If the server certificate is not valid, the healthcheck will fail
   disk:
     - name: "log-volume-space"
@@ -76,6 +79,11 @@ extraHealthChecks:
       dimension: "p75" #Check p75 latency
       type: TIMER
       threshold: 2 #if p75 latency is more than 2 seconds application will become unhealthy
+    - name: "critical-errors"
+      metric: "custom.critical.error"
+      dimension: "m5_rate" #Check 5 minute rate
+      type: METER
+      threshold: 2000 #if the error rate is more than 2000 in 5 minutes application will become unhealthy
 ```
 
 ### Metric Types Supported

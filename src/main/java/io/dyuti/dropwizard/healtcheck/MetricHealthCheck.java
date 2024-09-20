@@ -36,7 +36,7 @@ public class MetricHealthCheck extends HealthCheck {
         default -> meter.getOneMinuteRate();
       };
       if(value > config.getThreshold()) {
-        return Result.unhealthy("Log rate exceeded threshold: " + value);
+        return Result.unhealthy("Meter " +config.getMetric() +"[" +config.getDimension() +"]" +"  exceeded threshold: " + value);
       }
     }
     return Result.healthy();
@@ -59,7 +59,7 @@ public class MetricHealthCheck extends HealthCheck {
         default -> -1;
       };
       if(value > 0 && value > config.getThreshold()) {
-        return Result.unhealthy("Timer exceeded threshold: " + value);
+        return Result.unhealthy("Timer " +config.getMetric() +"[" +config.getDimension() +"]" +"  exceeded threshold: " + value);
       }
     }
     return Result.healthy();
@@ -82,7 +82,7 @@ public class MetricHealthCheck extends HealthCheck {
         default -> -1;
       };
       if(value > 0 && value > config.getThreshold()) {
-        return Result.unhealthy("Histogram exceeded threshold: " + value);
+        return Result.unhealthy("Histogram " +config.getMetric() +"[" +config.getDimension() +"]" +"  exceeded threshold: " + value);
       }
     }
     return Result.healthy();
@@ -92,7 +92,7 @@ public class MetricHealthCheck extends HealthCheck {
     if(environment.metrics().getCounters().containsKey(config.getMetric())) {
       var counter = environment.metrics().getCounters().get(config.getMetric());
       if(counter.getCount() > config.getThreshold()) {
-        return Result.unhealthy("Counter exceeded threshold: " + counter.getCount());
+        return Result.unhealthy("Counter " +config.getMetric() +"[" +config.getDimension() +"]" +"  exceeded threshold: " + counter.getCount());
       }
     }
     return Result.healthy();
@@ -104,7 +104,7 @@ public class MetricHealthCheck extends HealthCheck {
       if(gauge.getValue() instanceof Number) {
         var value = ((Number) gauge.getValue()).longValue();
         if(value > config.getThreshold()) {
-          return Result.unhealthy("Gauge exceeded threshold: " + value);
+          return Result.unhealthy("Gauge " +config.getMetric() +"[" +config.getDimension() +"]" +"  exceeded threshold: " + value);
         }
       }
     }

@@ -15,10 +15,6 @@
  */
 package io.dyuti.dropwizard;
 
-import io.dropwizard.core.Configuration;
-import io.dropwizard.core.ConfiguredBundle;
-import io.dropwizard.core.setup.Bootstrap;
-import io.dropwizard.core.setup.Environment;
 import io.dropwizard.health.check.tcp.TcpHealthCheck;
 import io.dyuti.dropwizard.config.HealthcheckExtrasConfig;
 import io.dyuti.dropwizard.healtcheck.DiskSpaceHealthCheck;
@@ -28,6 +24,10 @@ import io.dyuti.dropwizard.healtcheck.MetricHealthCheck;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import lombok.extern.slf4j.Slf4j;
+import io.dropwizard.core.ConfiguredBundle;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import io.dropwizard.core.Configuration;
 
 /**
  * Bundle that allows initializing TCP and HTTP(s) health checks with easy configuration

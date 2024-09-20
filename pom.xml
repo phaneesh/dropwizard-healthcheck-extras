@@ -10,6 +10,11 @@
 
   <name>dropwizard-healthcheck-extras</name>
   <url>https://github.com/phaneesh/dropwizard-healthcheck-extras</url>
+  <description>This bundle adds additional healthchecks which can used to ensure that the
+    application and perform healthchecks with endpoint resources like proxies, external endpoints
+    from a connectivity standpoint. It can also be used to monitor application metrics and disk
+    space based health.
+  </description>
 
   <licenses>
     <license>
@@ -64,17 +69,6 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
 
   <build>
     <plugins>
@@ -171,14 +165,12 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.13</version>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.5.0</version>
         <extensions>true</extensions>
         <configuration>
-          <serverId>ossrh</serverId>
-          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          <publishingServerId>central</publishingServerId>
         </configuration>
       </plugin>
     </plugins>

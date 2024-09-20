@@ -41,11 +41,6 @@
     <url>https://github.com/phaneesh/dropwizard-healthcheck-extras/issues</url>
   </issueManagement>
 
-  <ciManagement>
-    <system>Travis CI</system>
-    <url>https://travis-ci.org/phaneesh/dropwizard-healthcheck-extras</url>
-  </ciManagement>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <dropwizard.version>2.1.12</dropwizard.version>

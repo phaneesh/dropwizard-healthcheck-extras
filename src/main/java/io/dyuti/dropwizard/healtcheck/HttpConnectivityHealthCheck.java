@@ -30,7 +30,7 @@ public class HttpConnectivityHealthCheck extends HealthCheck {
       }
       connection = (HttpURLConnection) url.openConnection();
       connection.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(config.getConnectTimeout()));
-      connection.setRequestMethod("CONNECT");
+      connection.setRequestMethod("GET");
       connection.connect();
       return Result.healthy();
     } catch( Exception e) {

@@ -32,7 +32,7 @@ public class HttpsConnectivityHealthCheck extends HealthCheck {
       }
       connection = (HttpsURLConnection) url.openConnection();
       connection.setConnectTimeout(config.getConnectTimeout());
-      connection.setRequestMethod("CONNECT");
+      connection.setRequestMethod("GET");
       connection.connect();
       if (config.isVerify()) {
         Certificate[] certs = connection.getServerCertificates();

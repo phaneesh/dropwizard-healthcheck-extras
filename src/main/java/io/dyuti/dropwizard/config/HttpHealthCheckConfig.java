@@ -20,4 +20,6 @@ public class HttpHealthCheckConfig {
   @Min(1000)
   private int connectTimeout;
   private boolean verify;
+
+  private HealthCheckMode mode = HealthCheckMode.NORMAL;
 }

@@ -20,6 +20,8 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.health.check.tcp.TcpHealthCheck;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dyuti.dropwizard.alert.AlertPublisher;
+import io.dyuti.dropwizard.alert.LogAlertPublisher;
 import io.dyuti.dropwizard.config.HealthcheckExtrasConfig;
 import io.dyuti.dropwizard.healtcheck.DiskSpaceHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpConnectivityHealthCheck;
@@ -30,22 +32,28 @@ import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Bundle that allows initializing TCP and HTTP(s) health checks with easy configuration
- */
+/** Bundle that allows initializing TCP and HTTP(s) health checks with easy configuration */
 @Slf4j
 public abstract class HealthCheckExtrasBundle<T extends Configuration>
     implements ConfiguredBundle<T> {
 
+  private AlertPublisher alertPublisher;
+
   @Override
-  public void initialize(Bootstrap<?> bootstrap) {}
+  public void initialize(Bootstrap<?> bootstrap) {
+    alertPublisher = new LogAlertPublisher();
+  }
 
   public abstract HealthcheckExtrasConfig getConfig(T configuration);
+
+  public AlertPublisher getAlertPublisher() {
+    return alertPublisher;
+  }
 
   @Override
   public void run(T configuration, Environment environment) {
     var config = getConfig(configuration);
-    if(Objects.nonNull(config.getTcp()) && !config.getTcp().isEmpty()) {
+    if (Objects.nonNull(config.getTcp()) && !config.getTcp().isEmpty()) {
       log.info("Registering TCP Health Checks");
       config
           .getTcp()
@@ -63,32 +71,32 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
                                 tcpHealthCheckConfig.getConnectTimeout(), ChronoUnit.MILLIS)));
               });
     }
-    if(Objects.nonNull(config.getHttp()) && !config.getHttp().isEmpty()) {
+    if (Objects.nonNull(config.getHttp()) && !config.getHttp().isEmpty()) {
       log.info("Registering HTTP Health Checks");
-      config
-          .getHttp()
-          .stream()
+      config.getHttp().stream()
           .filter(c -> !c.getUrl().startsWith("https"))
           .forEach(
               httpConfig -> {
                 log.info("Registering Http Health Check for: {}", httpConfig);
                 environment
                     .healthChecks()
-                    .register(httpConfig.getName(), new HttpConnectivityHealthCheck(httpConfig));
+                    .register(
+                        httpConfig.getName(),
+                        new HttpConnectivityHealthCheck(httpConfig, getAlertPublisher()));
               });
-      config
-          .getHttp()
-          .stream()
+      config.getHttp().stream()
           .filter(c -> c.getUrl().startsWith("https"))
           .forEach(
               httpConfig -> {
                 log.info("Registering Https Health Check for: {}", httpConfig);
                 environment
                     .healthChecks()
-                    .register(httpConfig.getName(), new HttpsConnectivityHealthCheck(httpConfig));
+                    .register(
+                        httpConfig.getName(),
+                        new HttpsConnectivityHealthCheck(httpConfig, getAlertPublisher()));
               });
     }
-    if(Objects.nonNull(config.getDisk()) && !config.getDisk().isEmpty()) {
+    if (Objects.nonNull(config.getDisk()) && !config.getDisk().isEmpty()) {
       log.info("Registering Disk Space Health Checks");
       config
           .getDisk()
@@ -97,10 +105,12 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
                 log.info("Registering Disk Space Health Check for: {}", diskConfig);
                 environment
                     .healthChecks()
-                    .register(diskConfig.getName(), new DiskSpaceHealthCheck(diskConfig));
+                    .register(
+                        diskConfig.getName(),
+                        new DiskSpaceHealthCheck(diskConfig, getAlertPublisher()));
               });
     }
-    if(Objects.nonNull(config.getMetric()) && !config.getMetric().isEmpty()) {
+    if (Objects.nonNull(config.getMetric()) && !config.getMetric().isEmpty()) {
       log.info("Registering Metric Health Checks");
       config
           .getMetric()
@@ -111,7 +121,8 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
                     .healthChecks()
                     .register(
                         metricHealthCheckConfig.getName(),
-                        new MetricHealthCheck(environment, metricHealthCheckConfig));
+                        new MetricHealthCheck(
+                            environment, metricHealthCheckConfig, getAlertPublisher()));
               });
     }
   }

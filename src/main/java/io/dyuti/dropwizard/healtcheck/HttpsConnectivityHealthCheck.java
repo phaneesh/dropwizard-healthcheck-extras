@@ -1,6 +1,8 @@
 package io.dyuti.dropwizard.healtcheck;
 
 import com.codahale.metrics.health.HealthCheck;
+import io.dyuti.dropwizard.alert.AlertPublisher;
+import io.dyuti.dropwizard.config.HealthCheckMode;
 import io.dyuti.dropwizard.config.HttpHealthCheckConfig;
 import java.net.URI;
 import java.net.URL;
@@ -8,18 +10,17 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Objects;
 import javax.net.ssl.HttpsURLConnection;
+import lombok.RequiredArgsConstructor;
 
 /**
  * HTTPS Health Check that performs basic CONNECT to check is the application can each the URL endpoint
  * specified in the configuration. Can also perform additional certificate validation if required.
  */
+@RequiredArgsConstructor
 public class HttpsConnectivityHealthCheck extends HealthCheck {
 
   private final HttpHealthCheckConfig config;
-
-  public HttpsConnectivityHealthCheck(HttpHealthCheckConfig config) {
-    this.config = config;
-  }
+  private final AlertPublisher alertPublisher;
 
   private URL url;
 
@@ -43,6 +44,10 @@ public class HttpsConnectivityHealthCheck extends HealthCheck {
       }
       return Result.healthy();
     } catch (Exception e) {
+      if(config.getMode() == HealthCheckMode.ALERT) {
+        alertPublisher.publish(config.getName(), Result.unhealthy(e));
+        return Result.healthy();
+      }
       return Result.unhealthy(e);
     } finally {
       if (Objects.nonNull(connection)) {

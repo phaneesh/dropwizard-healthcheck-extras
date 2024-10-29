@@ -29,7 +29,7 @@ This bundle makes it simple to add healthchecks to monitor external endpoint res
 <dependency>
     <groupId>io.dyuti</groupId>
     <artifactId>dropwizard-healthcheck-extras</artifactId>
-    <version>2.1.12-3</version>
+    <version>2.1.12-4</version>
 </dependency>
 ```
 
@@ -56,6 +56,7 @@ extraHealthChecks:
       host: "192.167.172.76"
       port: 3500
       timeout: 2000 #2 seconds
+      mode: NORMAL
   http:
     - name: "external-http"
       url: "http://www.somewhere.com"
@@ -64,6 +65,7 @@ extraHealthChecks:
       url: "https://www.somewhere.com"
       timeout: 1000 #1 second (default)
       verifyCertificate: true #Verify certificate. If the server certificate is not valid, the healthcheck will fail
+      mode: NORMAL
   disk:
     - name: "log-volume-space"
       path: "/var/log"
@@ -74,11 +76,13 @@ extraHealthChecks:
       dimension: "m1_rate" #Check 1 minute rate
       type: METER
       threshold: 1000 #If error rate is more than 1000 in 1 minute application will become unhealthy
+      mode: ALERT
     - name: "metric-get-latency"
       metric: "io.dropwizard.jetty.MutableServletContextHandler.get-requests"
       dimension: "p75" #Check p75 latency
       type: TIMER
       threshold: 2 #if p75 latency is more than 2 seconds application will become unhealthy
+      mode: ALERT
     - name: "critical-errors"
       metric: "custom.critical.error"
       dimension: "m5_rate" #Check 5 minute rate
@@ -111,3 +115,37 @@ extraHealthChecks:
 | m5_rate   | No      | No    | Yes   | No    | No        |
 | m15_rate  | No      | No    | Yes   | No    | No        |
 | mean_rate | No      | No    | Yes   | No    | No        |
+
+### Alert Publisher
+The bundle also supports alerting the healthcheck status to a publisher. 
+The publisher can be any class that implements the `AlertPublisher` interface. 
+The publisher will be called whenever the healthcheck result is unhealthy and healthcheck mode is set to ALERT in config. 
+The publisher can be configured when initializing the bundle as shown below:
+
+```java
+ @Override
+    public void initialize(final Bootstrap bootstrap) {
+        bootstrap.addBundle(new HealthCheckExtrasBundle<Configuration>() {
+
+          public HealthcheckExtrasConfig getConfig(Configuration appConfig) {
+            return appConfig.getHealthcheckExtrasConfig();
+          }
+          
+          public AlertPublisher getAlertPublisher() {
+            return new AlertPublisher() {
+                @Override
+                public void publish(HealthCheckExtrasConfig config, HealthCheckExtrasConfig.HealthCheckConfig healthCheckConfig, HealthCheck.Result result) {
+                    //Publish the alert to a monitoring system
+                }
+            };
+          }
+        });
+    }
+```
+
+Default AlertPublisher is a `LogAlertPublisher` which logs the alert to the application logs. 
+A `MetricAlertPublisher` is also available which can be used to publish the alert to a counter with 
+the name in the following format:
+```
+<prefix>.<healthcheck-name>.healthcheck.alerts
+```

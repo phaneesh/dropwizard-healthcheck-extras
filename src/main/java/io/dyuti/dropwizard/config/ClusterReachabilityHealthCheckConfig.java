@@ -1,0 +1,41 @@
+package io.dyuti.dropwizard.config;
+
+import java.util.Collections;
+import java.util.List;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ClusterReachabilityHealthCheckConfig {
+
+  public enum SelectionMode {
+    RANDOM, SEQUENTIAL
+  }
+
+  public enum HostNameMode {
+    PATTERN, LIST
+  }
+
+  @NotBlank
+  private String name;
+  private String hostNamePattern;
+  private List<String> hosts = Collections.emptyList();
+  @NotBlank
+  private String portRange;
+  @Min(1000)
+  private int connectTimeout = 1000;
+  @Min(60000)
+  private int checkInterval = 43200000;
+  @NotNull
+  private HostNameMode hostNameMode = HostNameMode.PATTERN;
+  @NotNull
+  private HealthCheckMode mode = HealthCheckMode.NORMAL;
+  @NotNull
+  private SelectionMode selectionMode = SelectionMode.RANDOM;
+}

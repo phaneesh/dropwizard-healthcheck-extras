@@ -23,6 +23,7 @@ import io.dropwizard.setup.Environment;
 import io.dyuti.dropwizard.alert.AlertPublisher;
 import io.dyuti.dropwizard.alert.LogAlertPublisher;
 import io.dyuti.dropwizard.config.HealthcheckExtrasConfig;
+import io.dyuti.dropwizard.healtcheck.ClusterReachabilityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.DiskSpaceHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpConnectivityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpsConnectivityHealthCheck;
@@ -32,7 +33,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
-/** Bundle that allows initializing TCP and HTTP(s) health checks with easy configuration */
+/**
+ * Bundle that allows initializing TCP and HTTP(s) health checks with easy configuration
+ */
 @Slf4j
 public abstract class HealthCheckExtrasBundle<T extends Configuration>
     implements ConfiguredBundle<T> {
@@ -124,6 +127,14 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
                         new MetricHealthCheck(
                             environment, metricHealthCheckConfig, getAlertPublisher()));
               });
+    }
+    if (Objects.nonNull(config.getCluster()) && !config.getCluster().isEmpty()) {
+      log.info("Registering Cluster Reachability Health Checks");
+      config.getCluster().forEach(clusterConfig -> {
+        log.info("Registering Cluster Reachability Health Check for: {}", clusterConfig);
+        environment.healthChecks().register(clusterConfig.getName(),
+            new ClusterReachabilityHealthCheck(clusterConfig, getAlertPublisher()));
+      });
     }
   }
 }

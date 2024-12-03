@@ -47,8 +47,8 @@ public class MetricHealthCheck extends HealthCheck {
                     + "]"
                     + "  exceeded threshold: "
                     + value);
+        alertPublisher.publish(config.getName(), result);
         if (config.getMode() == HealthCheckMode.ALERT) {
-          alertPublisher.publish(config.getName(), result);
           return Result.healthy();
         }
         return result;
@@ -84,8 +84,8 @@ public class MetricHealthCheck extends HealthCheck {
                     + "]"
                     + "  exceeded threshold: "
                     + value);
+        alertPublisher.publish(config.getName(), result);
         if (config.getMode() == HealthCheckMode.ALERT) {
-          alertPublisher.publish(config.getName(), result);
           return Result.healthy();
         }
         return result;
@@ -121,8 +121,8 @@ public class MetricHealthCheck extends HealthCheck {
                     + "]"
                     + "  exceeded threshold: "
                     + value);
+        alertPublisher.publish(config.getName(), result);
         if (config.getMode() == HealthCheckMode.ALERT) {
-          alertPublisher.publish(config.getName(), result);
           return Result.healthy();
         }
         return result;
@@ -144,8 +144,8 @@ public class MetricHealthCheck extends HealthCheck {
                     + "]"
                     + "  exceeded threshold: "
                     + counter.getCount());
+        alertPublisher.publish(config.getName(), result);
         if (config.getMode() == HealthCheckMode.ALERT) {
-          alertPublisher.publish(config.getName(), result);
           return Result.healthy();
         }
         return result;
@@ -169,8 +169,8 @@ public class MetricHealthCheck extends HealthCheck {
                       + "]"
                       + "  exceeded threshold: "
                       + value);
+          alertPublisher.publish(config.getName(), result);
           if (config.getMode() == HealthCheckMode.ALERT) {
-            alertPublisher.publish(config.getName(), result);
             return Result.healthy();
           }
           return result;

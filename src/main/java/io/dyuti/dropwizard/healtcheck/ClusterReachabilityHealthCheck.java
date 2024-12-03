@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +60,7 @@ public class ClusterReachabilityHealthCheck extends HealthCheck {
       if(config.getSelectionMode() == SelectionMode.RANDOM) {
         return checkHostPatternRandom(hostMatcher, startHost, endHost, startPort, endPort);
       } else if (config.getSelectionMode() == SelectionMode.SEQUENTIAL) {
-        return executeHostPatternSequential(hostMatcher, startHost, endHost, startPort, endPort);
+        return checkHostPatternSequential(hostMatcher, startHost, endHost, startPort, endPort);
       }
     }
     return Result.healthy();
@@ -100,7 +100,7 @@ public class ClusterReachabilityHealthCheck extends HealthCheck {
     return executeHealthCheck(host, selectedPort);
   }
 
-  private Result executeHostPatternSequential(Matcher hostMatcher, int startHost, int endHost,
+  private Result checkHostPatternSequential(Matcher hostMatcher, int startHost, int endHost,
       int startPort, int endPort) {
     for (int i = startHost; i <= endHost; i++) {
       int selectedPort = ThreadLocalRandom.current().nextInt(startPort, endPort);
@@ -125,25 +125,25 @@ public class ClusterReachabilityHealthCheck extends HealthCheck {
       if (socket.isConnected()) {
         return Result.healthy();
       }
+      alert(host, selectedPort);
       if (config.getMode() == HealthCheckMode.ALERT) {
-        return alert(host, selectedPort);
+        return Result.healthy();
       }
       return Result.unhealthy(
           "Cluster host %s is not reachable on port range: %s".formatted(host, selectedPort));
     } catch (IOException e) {
+      alert(host, selectedPort);
       if (config.getMode() == HealthCheckMode.ALERT) {
-        return alert(host, selectedPort);
+        return Result.healthy();
       }
       return Result.unhealthy(e);
     }
   }
 
-  private Result alert(String host, int port) {
+  private void alert(String host, int port) {
     alertPublisher.publish(
         config.getName(),
         Result.unhealthy(
             "Cluster host %s is not reachable on port range: %s".formatted(host, port)));
-    return Result.healthy();
   }
-
 }

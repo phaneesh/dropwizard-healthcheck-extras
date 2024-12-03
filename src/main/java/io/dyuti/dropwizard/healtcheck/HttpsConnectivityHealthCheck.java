@@ -44,8 +44,8 @@ public class HttpsConnectivityHealthCheck extends HealthCheck {
       }
       return Result.healthy();
     } catch (Exception e) {
+      alertPublisher.publish(config.getName(), Result.unhealthy(e));
       if(config.getMode() == HealthCheckMode.ALERT) {
-        alertPublisher.publish(config.getName(), Result.unhealthy(e));
         return Result.healthy();
       }
       return Result.unhealthy(e);

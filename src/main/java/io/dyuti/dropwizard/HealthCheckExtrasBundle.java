@@ -22,15 +22,21 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dyuti.dropwizard.alert.AlertPublisher;
 import io.dyuti.dropwizard.alert.LogAlertPublisher;
+import io.dyuti.dropwizard.config.ClusterReachabilityHealthCheckConfig.HostListSource;
 import io.dyuti.dropwizard.config.HealthcheckExtrasConfig;
 import io.dyuti.dropwizard.healtcheck.ClusterReachabilityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.DiskSpaceHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpConnectivityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpsConnectivityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.MetricHealthCheck;
+import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -51,6 +57,11 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
 
   public AlertPublisher getAlertPublisher() {
     return alertPublisher;
+  }
+
+  //Default dynamic source for cluster health check
+  public Map<String, Supplier<List<InetSocketAddress>>> getHostSource() {
+    return Collections.emptyMap();
   }
 
   @Override
@@ -132,8 +143,18 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
       log.info("Registering Cluster Reachability Health Checks");
       config.getCluster().forEach(clusterConfig -> {
         log.info("Registering Cluster Reachability Health Check for: {}", clusterConfig);
-        environment.healthChecks().register(clusterConfig.getName(),
-            new ClusterReachabilityHealthCheck(clusterConfig, getAlertPublisher()));
+        if (clusterConfig.getHostListSource() == HostListSource.CONFIG) {
+          environment.healthChecks().register(clusterConfig.getName(),
+              new ClusterReachabilityHealthCheck(clusterConfig, getAlertPublisher()));
+        } else {
+          var source = getHostSource().get(clusterConfig.getName());
+          if (Objects.nonNull(source)) {
+            environment.healthChecks().register(clusterConfig.getName(),
+                new ClusterReachabilityHealthCheck(clusterConfig, getAlertPublisher(), source));
+          } else {
+            log.error("No host source found for: {}", clusterConfig.getHostListSource());
+          }
+        }
       });
     }
   }

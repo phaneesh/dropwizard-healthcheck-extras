@@ -208,3 +208,34 @@ the name in the following format:
 ```
 <prefix>.<healthcheck-name>.healthcheck.alerts
 ```
+
+### Cluster Healthcheck Dynamic Source
+
+```java
+import java.net.InetSocketAddress;
+
+@Override
+public void initialize(final Bootstrap bootstrap) {
+  bootstrap.addBundle(new HealthCheckExtrasBundle<Configuration>() {
+
+    public HealthcheckExtrasConfig getConfig(Configuration appConfig) {
+      return appConfig.getHealthcheckExtrasConfig();
+    }
+
+    //MetricsAlertPublisher
+    public AlertPublisher getAlertPublisher() {
+      return new MetricsAlertPublisher(metricRegistry);
+    }
+
+    public Map<String, Supplier<List<InetSocketAddress>>> getHostSource() {
+      Map<String, Supplier<List<InetSocketAddress>>> hostSource = new HashMap<>();
+      hostSource.put("my-remote-cluster", () -> {
+        List<InetSocketAddress> hosts = new ArrayList<>();
+        //Add the hosts to the list
+        return hosts;
+      });
+      return hostSource;
+    }
+  });
+}
+```

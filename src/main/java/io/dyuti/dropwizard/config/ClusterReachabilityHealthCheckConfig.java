@@ -22,6 +22,10 @@ public class ClusterReachabilityHealthCheckConfig {
     PATTERN, LIST
   }
 
+  public enum HostListSource {
+    CONFIG, DYNAMIC
+  }
+
   @NotBlank
   private String name;
   private String hostNamePattern;
@@ -38,4 +42,6 @@ public class ClusterReachabilityHealthCheckConfig {
   private HealthCheckMode mode = HealthCheckMode.NORMAL;
   @NotNull
   private SelectionMode selectionMode = SelectionMode.RANDOM;
+  @NotNull
+  private HostListSource hostListSource = HostListSource.CONFIG;
 }

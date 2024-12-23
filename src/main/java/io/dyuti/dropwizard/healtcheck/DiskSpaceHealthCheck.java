@@ -6,9 +6,11 @@ import io.dyuti.dropwizard.config.DiskSpaceHealthCheckConfig;
 import io.dyuti.dropwizard.config.HealthCheckMode;
 import java.io.File;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /** Health Check for Disk Space */
 @RequiredArgsConstructor
+@Slf4j
 public class DiskSpaceHealthCheck extends HealthCheck {
 
   private final DiskSpaceHealthCheckConfig config;
@@ -28,6 +30,7 @@ public class DiskSpaceHealthCheck extends HealthCheck {
         }
       }
     } catch (Exception e) {
+      log.error("Error executing disk space availability healthcheck for {}", config.getPath(), e);
       alert(0);
       if (config.getMode() == HealthCheckMode.ALERT) {
         return Result.healthy();

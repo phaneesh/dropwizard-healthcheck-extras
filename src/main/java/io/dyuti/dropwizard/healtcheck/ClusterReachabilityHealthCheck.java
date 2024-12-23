@@ -170,6 +170,7 @@ public class ClusterReachabilityHealthCheck extends HealthCheck {
       return Result.unhealthy(
           "Cluster host %s is not reachable on port range: %s".formatted(host, selectedPort));
     } catch (IOException e) {
+      log.error("Error executing cluster reachability healthcheck for {}:{}", host, selectedPort, e);
       alert(host, selectedPort);
       if (config.getMode() == HealthCheckMode.ALERT) {
         return Result.healthy();

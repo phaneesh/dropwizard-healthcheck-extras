@@ -11,12 +11,14 @@ import java.security.cert.X509Certificate;
 import java.util.Objects;
 import javax.net.ssl.HttpsURLConnection;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * HTTPS Health Check that performs basic CONNECT to check is the application can each the URL endpoint
  * specified in the configuration. Can also perform additional certificate validation if required.
  */
 @RequiredArgsConstructor
+@Slf4j
 public class HttpsConnectivityHealthCheck extends HealthCheck {
 
   private final HttpHealthCheckConfig config;
@@ -44,6 +46,7 @@ public class HttpsConnectivityHealthCheck extends HealthCheck {
       }
       return Result.healthy();
     } catch (Exception e) {
+      log.error("Error executing HTTPS connectivity healthcheck for {}", config.getUrl(), e);
       alertPublisher.publish(config.getName(), Result.unhealthy(e));
       if(config.getMode() == HealthCheckMode.ALERT) {
         return Result.healthy();

@@ -10,12 +10,14 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * HTTP Health Check that performs basic CONNECT to check is the application can each the URL
  * endpoint specified in the configuration
  */
 @RequiredArgsConstructor
+@Slf4j
 public class HttpConnectivityHealthCheck extends HealthCheck {
 
   private final HttpHealthCheckConfig config;
@@ -36,6 +38,7 @@ public class HttpConnectivityHealthCheck extends HealthCheck {
       connection.connect();
       return Result.healthy();
     } catch (Exception e) {
+      log.error("Error executing HTTP connectivity healthcheck for {}", config.getUrl(), e);
       alertPublisher.publish(config.getName(), Result.unhealthy(e));
       if (config.getMode() == HealthCheckMode.ALERT) {
         return Result.healthy();

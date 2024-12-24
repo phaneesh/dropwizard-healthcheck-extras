@@ -24,4 +24,6 @@ public class MetricHealthCheckConfig {
   private String dimension = "m1_rate";
   @Min(0)
   private long threshold;
+
+  private HealthCheckMode mode = HealthCheckMode.NORMAL;
 }

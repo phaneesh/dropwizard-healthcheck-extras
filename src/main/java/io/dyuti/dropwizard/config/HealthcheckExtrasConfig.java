@@ -17,4 +17,5 @@ public class HealthcheckExtrasConfig {
   private List<HttpHealthCheckConfig> http = new ArrayList<>();
   private List<DiskSpaceHealthCheckConfig> disk = new ArrayList<>();
   private List<MetricHealthCheckConfig> metric = new ArrayList<>();
+  private List<ClusterReachabilityHealthCheckConfig> cluster = new ArrayList<>();
 }

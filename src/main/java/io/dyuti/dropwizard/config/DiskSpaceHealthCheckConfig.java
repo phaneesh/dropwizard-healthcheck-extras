@@ -19,4 +19,5 @@ public class DiskSpaceHealthCheckConfig {
   private String path;
   @Min(102400)
   private long threshold;
+  private HealthCheckMode mode = HealthCheckMode.NORMAL;
 }

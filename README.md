@@ -30,7 +30,7 @@ This bundle makes it simple to add healthchecks to monitor external endpoint res
 <dependency>
     <groupId>io.dyuti</groupId>
     <artifactId>dropwizard-healthcheck-extras</artifactId>
-    <version>2.1.12-7</version>
+    <version>2.1.12-10</version>
 </dependency>
 ```
 

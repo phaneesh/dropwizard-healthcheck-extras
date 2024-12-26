@@ -1,7 +1,7 @@
 package io.dyuti.dropwizard.config;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TcpHealthCheckConfig {
 
-  @NotBlank private String name;
+  @NotBlank
+  private String name;
   @NotBlank private String host;
   @NotBlank private int port;
 

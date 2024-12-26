@@ -15,6 +15,10 @@
  */
 package io.dyuti.dropwizard;
 
+import io.dropwizard.core.Configuration;
+import io.dropwizard.core.ConfiguredBundle;
+import io.dropwizard.core.setup.Bootstrap;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.health.check.tcp.TcpHealthCheck;
 import io.dyuti.dropwizard.alert.AlertPublisher;
 import io.dyuti.dropwizard.alert.LogAlertPublisher;
@@ -33,16 +37,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import io.dropwizard.core.ConfiguredBundle;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import io.dropwizard.core.Configuration;
 
 /**
  * Bundle that allows initializing TCP and HTTP(s) health checks with easy configuration
  */
 @Slf4j
+@Getter
 public abstract class HealthCheckExtrasBundle<T extends Configuration>
     implements ConfiguredBundle<T> {
 
@@ -55,9 +57,6 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
 
   public abstract HealthcheckExtrasConfig getConfig(T configuration);
 
-  public AlertPublisher getAlertPublisher() {
-    return alertPublisher;
-  }
 
   //Default dynamic source for cluster health check
   public Map<String, Supplier<List<InetSocketAddress>>> getHostSource() {

@@ -1,7 +1,7 @@
 package io.dyuti.dropwizard.healtcheck;
 
 import com.codahale.metrics.health.HealthCheck;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.dyuti.dropwizard.alert.AlertPublisher;
 import io.dyuti.dropwizard.config.HealthCheckMode;
 import io.dyuti.dropwizard.config.MetricHealthCheckConfig;

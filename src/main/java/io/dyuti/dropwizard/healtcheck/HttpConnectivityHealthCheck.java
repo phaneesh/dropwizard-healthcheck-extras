@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +32,7 @@ public class HttpConnectivityHealthCheck extends HealthCheck {
         url = new URI(config.getUrl()).toURL();
       }
       connection = (HttpURLConnection) url.openConnection();
-      connection.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(config.getConnectTimeout()));
+      connection.setConnectTimeout(config.getConnectTimeout());
       connection.setRequestMethod("GET");
       connection.connect();
       return Result.healthy();

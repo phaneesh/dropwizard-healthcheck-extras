@@ -5,11 +5,16 @@
 
   <groupId>io.dyuti</groupId>
   <artifactId>dropwizard-healthcheck-extras</artifactId>
-  <version>4.0.8-1</version>
+  <version>3.0.11-2</version>
   <packaging>jar</packaging>
 
   <name>dropwizard-healthcheck-extras</name>
   <url>https://github.com/phaneesh/dropwizard-healthcheck-extras</url>
+  <description>This bundle adds additional healthchecks which can used to ensure that the
+    application and perform healthchecks with endpoint resources like proxies, external endpoints
+    from a connectivity standpoint. It can also be used to monitor application metrics and disk
+    space based health.
+  </description>
 
   <licenses>
     <license>
@@ -32,7 +37,7 @@
     <developer>
       <id>phaneesh</id>
       <name>Phaneesh Nagaraja</name>
-      <email>phaneesh@phonepe.com</email>
+      <email>phaneesh.n@gmail.com</email>
     </developer>
   </developers>
 
@@ -43,11 +48,12 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <dropwizard.version>4.0.8</dropwizard.version>
+    <dropwizard.version>3.0.11</dropwizard.version>
     <lombok.version>1.18.34</lombok.version>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+    <metrics-core.version>4.2.25</metrics-core.version>
   </properties>
 
   <dependencies>
@@ -64,17 +70,6 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
 
   <build>
     <plugins>
@@ -102,7 +97,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0-M2</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <id>enforce-no-snapshots</id>
@@ -171,14 +166,12 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.sonatype.plugins</groupId>
-        <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.13</version>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.5.0</version>
         <extensions>true</extensions>
         <configuration>
-          <serverId>ossrh</serverId>
-          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+          <publishingServerId>central</publishingServerId>
         </configuration>
       </plugin>
     </plugins>

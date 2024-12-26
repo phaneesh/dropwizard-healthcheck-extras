@@ -19,4 +19,6 @@ public class TcpHealthCheckConfig {
 
   @Min(1000)
   private int connectTimeout = 1000;
+
+  private HealthCheckMode mode = HealthCheckMode.NORMAL;
 }

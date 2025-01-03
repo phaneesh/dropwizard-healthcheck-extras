@@ -30,7 +30,7 @@ This bundle makes it simple to add healthchecks to monitor external endpoint res
 <dependency>
     <groupId>io.dyuti</groupId>
     <artifactId>dropwizard-healthcheck-extras</artifactId>
-    <version>3.0.11-1</version>
+    <version>3.0.11-3</version>
 </dependency>
 ```
 
@@ -61,10 +61,12 @@ extraHealthChecks:
   http:
     - name: "external-http"
       url: "http://www.somewhere.com"
-      timeout: 3000 #3 seconds
+      connectTimeout: 3000 #3 seconds
+      readTimeout: 3000 #3 seconds
     - name: "external-https"
       url: "https://www.somewhere.com"
-      timeout: 1000 #1 second (default)
+      connectTimeout: 1000 #1 second (default)
+      readTimeout: 10000 #10 seconds (default)
       verifyCertificate: true #Verify the certificate. If the server certificate is not valid, the healthcheck will fail
       mode: NORMAL
   disk:
@@ -100,7 +102,7 @@ extraHealthChecks:
       mode: ALERT
     - name: "my-remote-cluster-list"
       hostNameMode: LIST #Host name is specified as a list of hosts. Default is PATTERN
-      hosts: 
+      hosts:
         - "my-host-001.mydomain.com"
         - "my-host-002.mydomain.com"
         - "my-host-003.mydomain.com"

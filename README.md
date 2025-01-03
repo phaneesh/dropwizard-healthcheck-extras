@@ -30,7 +30,7 @@ This bundle makes it simple to add healthchecks to monitor external endpoint res
 <dependency>
     <groupId>io.dyuti</groupId>
     <artifactId>dropwizard-healthcheck-extras</artifactId>
-    <version>2.1.12-11</version>
+    <version>2.1.12-12</version>
 </dependency>
 ```
 
@@ -68,6 +68,7 @@ extraHealthChecks:
       connectTimeout: 1000 #1 second (default)
       readTimeout: 10000 #10 seconds (default)
       verifyCertificate: true #Verify the certificate. If the server certificate is not valid, the healthcheck will fail
+      tlsVersion: "TLSv1.2" #TLS version to use. Default is TLSv1.2
       mode: NORMAL
   disk:
     - name: "log-volume-space"

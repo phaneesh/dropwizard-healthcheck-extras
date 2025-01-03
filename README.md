@@ -30,7 +30,7 @@ This bundle makes it simple to add healthchecks to monitor external endpoint res
 <dependency>
     <groupId>io.dyuti</groupId>
     <artifactId>dropwizard-healthcheck-extras</artifactId>
-    <version>4.0.11-2</version>
+    <version>4.0.11-3</version>
 </dependency>
 ```
 
@@ -61,10 +61,12 @@ extraHealthChecks:
   http:
     - name: "external-http"
       url: "http://www.somewhere.com"
-      timeout: 3000 #3 seconds
+      connectTimeout: 3000 #3 seconds
+      readTimeout: 5000 #5 seconds (default)
     - name: "external-https"
       url: "https://www.somewhere.com"
-      timeout: 1000 #1 second (default)
+      connectTimeout: 1000 #1 second (default)
+      readTimeout: 10000 #10 seconds (default)
       verifyCertificate: true #Verify the certificate. If the server certificate is not valid, the healthcheck will fail
       mode: NORMAL
   disk:
@@ -159,7 +161,7 @@ public void initialize(final Bootstrap bootstrap) {
             @Override
             public void publish(String name, HealthCheck.Result result) {
                 //Publish the alert to a monitoring system
-            }
+            }10
         };
       }
     });

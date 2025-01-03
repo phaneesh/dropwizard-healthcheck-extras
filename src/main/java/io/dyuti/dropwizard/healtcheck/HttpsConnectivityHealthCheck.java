@@ -35,6 +35,7 @@ public class HttpsConnectivityHealthCheck extends HealthCheck {
       }
       connection = (HttpsURLConnection) url.openConnection();
       connection.setConnectTimeout(config.getConnectTimeout());
+      connection.setReadTimeout(config.getReadTimeout());
       connection.setRequestMethod("GET");
       connection.connect();
       if (config.isVerify()) {

@@ -18,8 +18,9 @@ public class HttpHealthCheckConfig {
   @NotBlank
   private String url;
   @Min(1000)
-  private int connectTimeout;
+  private int connectTimeout = 10000;
+  @Min(1000)
+  private int readTimeout = 10000;
   private boolean verify;
-
   private HealthCheckMode mode = HealthCheckMode.NORMAL;
 }

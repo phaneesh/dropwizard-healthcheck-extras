@@ -26,6 +26,7 @@ import io.dyuti.dropwizard.config.ClusterReachabilityHealthCheckConfig.HostListS
 import io.dyuti.dropwizard.config.HealthcheckExtrasConfig;
 import io.dyuti.dropwizard.healtcheck.ClusterReachabilityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.DiskSpaceHealthCheck;
+import io.dyuti.dropwizard.healtcheck.FastTcpHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpConnectivityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpsConnectivityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.MetricHealthCheck;
@@ -37,14 +38,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * Bundle that allows initializing TCP and HTTP(s) health checks with easy configuration
  */
 @Slf4j
-@Getter
 public abstract class HealthCheckExtrasBundle<T extends Configuration>
     implements ConfiguredBundle<T> {
 
@@ -57,6 +56,9 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
 
   public abstract HealthcheckExtrasConfig getConfig(T configuration);
 
+  public AlertPublisher getAlertPublisher() {
+    return alertPublisher;
+  }
 
   //Default dynamic source for cluster health check
   public Map<String, Supplier<List<InetSocketAddress>>> getHostSource() {
@@ -77,11 +79,7 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
                     .healthChecks()
                     .register(
                         tcpHealthCheckConfig.getName(),
-                        new TcpHealthCheck(
-                            tcpHealthCheckConfig.getHost(),
-                            tcpHealthCheckConfig.getPort(),
-                            Duration.of(
-                                tcpHealthCheckConfig.getConnectTimeout(), ChronoUnit.MILLIS)));
+                        new FastTcpHealthCheck(tcpHealthCheckConfig));
               });
     }
     if (Objects.nonNull(config.getHttp()) && !config.getHttp().isEmpty()) {

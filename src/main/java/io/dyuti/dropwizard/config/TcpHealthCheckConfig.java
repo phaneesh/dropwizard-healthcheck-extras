@@ -13,8 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TcpHealthCheckConfig {
 
-  @NotBlank
-  private String name;
+  @NotBlank private String name;
   @NotBlank private String host;
   @NotBlank private int port;
 

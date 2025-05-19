@@ -22,5 +22,6 @@ public class HttpHealthCheckConfig {
   @Min(1000)
   private int readTimeout = 10000;
   private boolean verify;
+  private String tlsVersion = "TLSv1.2";
   private HealthCheckMode mode = HealthCheckMode.NORMAL;
 }

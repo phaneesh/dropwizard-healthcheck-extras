@@ -26,6 +26,7 @@ import io.dyuti.dropwizard.config.ClusterReachabilityHealthCheckConfig.HostListS
 import io.dyuti.dropwizard.config.HealthcheckExtrasConfig;
 import io.dyuti.dropwizard.healtcheck.ClusterReachabilityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.DiskSpaceHealthCheck;
+import io.dyuti.dropwizard.healtcheck.FastTcpHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpConnectivityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpsConnectivityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.MetricHealthCheck;
@@ -78,11 +79,7 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
                     .healthChecks()
                     .register(
                         tcpHealthCheckConfig.getName(),
-                        new TcpHealthCheck(
-                            tcpHealthCheckConfig.getHost(),
-                            tcpHealthCheckConfig.getPort(),
-                            Duration.of(
-                                tcpHealthCheckConfig.getConnectTimeout(), ChronoUnit.MILLIS)));
+                        new FastTcpHealthCheck(tcpHealthCheckConfig));
               });
     }
     if (Objects.nonNull(config.getHttp()) && !config.getHttp().isEmpty()) {

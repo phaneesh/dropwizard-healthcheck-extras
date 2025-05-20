@@ -17,7 +17,6 @@ package io.dyuti.dropwizard;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.health.check.tcp.TcpHealthCheck;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dyuti.dropwizard.alert.AlertPublisher;
@@ -31,8 +30,6 @@ import io.dyuti.dropwizard.healtcheck.HttpConnectivityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.HttpsConnectivityHealthCheck;
 import io.dyuti.dropwizard.healtcheck.MetricHealthCheck;
 import java.net.InetSocketAddress;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +76,7 @@ public abstract class HealthCheckExtrasBundle<T extends Configuration>
                     .healthChecks()
                     .register(
                         tcpHealthCheckConfig.getName(),
-                        new FastTcpHealthCheck(tcpHealthCheckConfig));
+                        new FastTcpHealthCheck(tcpHealthCheckConfig, getAlertPublisher()));
               });
     }
     if (Objects.nonNull(config.getHttp()) && !config.getHttp().isEmpty()) {

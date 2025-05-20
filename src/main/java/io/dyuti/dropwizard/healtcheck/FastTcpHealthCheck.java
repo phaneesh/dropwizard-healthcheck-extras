@@ -1,6 +1,7 @@
 package io.dyuti.dropwizard.healtcheck;
 
 import com.codahale.metrics.health.HealthCheck;
+import io.dyuti.dropwizard.alert.AlertPublisher;
 import io.dyuti.dropwizard.config.HealthCheckMode;
 import io.dyuti.dropwizard.config.TcpHealthCheckConfig;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FastTcpHealthCheck extends HealthCheck {
 
   private final TcpHealthCheckConfig tcpHealthCheckConfig;
+  private final AlertPublisher alertPublisher;
 
   @Override
   protected Result check() throws Exception {
@@ -43,7 +45,7 @@ public class FastTcpHealthCheck extends HealthCheck {
               tcpHealthCheckConfig.getName(),
               tcpHealthCheckConfig.getHost(), tcpHealthCheckConfig.getPort(),
               tcpHealthCheckConfig.getConnectTimeout());
-          return handleError(new IOException(
+          return handleError(new Exception(
               "Connection timed out for " + tcpHealthCheckConfig.getHost() + ":"
                   + tcpHealthCheckConfig.getPort()));
         }
@@ -54,7 +56,7 @@ public class FastTcpHealthCheck extends HealthCheck {
           if (selectedKey.isConnectable()) {
             try {
               connected = socketChannel.finishConnect();
-            } catch (IOException e) {
+            } catch (Exception e) {
               log.error("[{}] Health check error for {}:{}", tcpHealthCheckConfig.getName(),
                   tcpHealthCheckConfig.getHost(), tcpHealthCheckConfig.getPort(), e);
               return handleError(e);
@@ -70,10 +72,12 @@ public class FastTcpHealthCheck extends HealthCheck {
             responseTime.toMillis());
         return Result.healthy("Response time: " + responseTime.toMillis() + " ms");
       } else {
+        log.error("[{}] Health check failed for {}:{}", tcpHealthCheckConfig.getName(),
+            tcpHealthCheckConfig.getHost(), tcpHealthCheckConfig.getPort());
         //Handle error
         return handleError(null);
       }
-    } catch (IOException e) {
+    } catch (Exception e) {
       log.error("[{}] Health check error for {}:{}", tcpHealthCheckConfig.getName(),
           tcpHealthCheckConfig.getHost(), tcpHealthCheckConfig.getPort(), e);
       return handleError(e);
@@ -81,6 +85,7 @@ public class FastTcpHealthCheck extends HealthCheck {
   }
 
   private Result handleError(Exception e) {
+    alertPublisher.publish(tcpHealthCheckConfig.getName(), Result.unhealthy(e));
     if (tcpHealthCheckConfig.getMode() == HealthCheckMode.ALERT) {
       return Result.healthy();
     }

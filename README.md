@@ -4,6 +4,8 @@ This bundle adds additional healthchecks which can used to ensure that the appli
 healthchecks with endpoint resources like proxies, external endpoints from a connectivity standpoint.
 It can also be used to monitor application metrics and disk space based health.
 
+Java 21+ and Dropwizard 5.0.0-rc.3+ are required to use this bundle.
+
 ## Supported healthchecks
 - TCP
 - HTTP
@@ -30,7 +32,7 @@ This bundle makes it simple to add healthchecks to monitor external endpoint res
 <dependency>
     <groupId>io.dyuti</groupId>
     <artifactId>dropwizard-healthcheck-extras</artifactId>
-    <version>4.0.13-1</version>
+    <version>5.0.0-rc.3-1</version>
 </dependency>
 ```
 

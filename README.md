@@ -122,7 +122,7 @@ extraHealthChecks:
 - HISTOGRAM
 
 ### Dimension Supported (Please use relevant dimension based on the metric type) 
-| Dimension | COUNTER | GUAGE | METER | TIMER | HISTOGRAM |
+| Dimension | COUNTER | GAUGE | METER | TIMER | HISTOGRAM |
 |-----------|---------|-------|-------|-------|-----------|
 | count     | No      | No    | Yes   | No    | No        |
 | max       | No      | No    | No    | Yes   | Yes       |
